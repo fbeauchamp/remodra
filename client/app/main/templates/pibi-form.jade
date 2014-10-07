@@ -1,0 +1,163 @@
+div(ng-controller="PibiCtrl",style="height:620px" )
+  h2 Fiche PIBI - Reception
+  p Numéro de point d'eau : {{pibi.hydrant.numero}} {{pibi.hydrant.dispo_terrestre}}
+  form.form-horizontal
+    .btn-group.btn-group-justified
+      a.btn(
+      ng-class="{'btn-warning':tabs.identification.active,'btn-success':!tabs.identification.active && tabs.identification.showed,'btn-danger':!tabs.identification.showed }",
+      ng-click="changeTab('identification')"
+      ) Identification
+      a.btn(
+      ng-class="{'btn-warning':tabs.verification.active,'btn-success':!tabs.verification.active && tabs.verification.showed ,'btn-danger':!tabs.verification.showed}",
+      ng-click="changeTab('verification')"
+      ) Vérification
+      a.btn(ng-class="{'btn-warning':tabs.gestionnaire.active,'btn-success':!tabs.gestionnaire.active && tabs.gestionnaire.showed,'btn-danger':!tabs.gestionnaire.showed }",
+      ng-click="changeTab('gestionnaire')"
+      ) Gestionnaire,
+      a.btn(ng-class="{'btn-warning':tabs.details.active,'btn-success':!tabs.details.active && tabs.details.showed ,'btn-danger':!tabs.details.showed}",
+      ng-click="changeTab('details')"
+      ) Point d'attention
+  div(ng-show="tabs.identification.active")
+    fieldset
+      legend  Traçabilité
+      .form-group.col-sm-6
+        label.col-sm-4.control-label CIS
+        .col-sm-8
+          input.form-control(readonly=true, value="SDIS")
+      .form-group.col-sm-6
+        label.col-sm-4.control-label Date de contrôle
+        .col-sm-8
+          input.form-control(type="date",ng-model="pibi.hydrant.date_contr")
+      .form-group.col-sm-6
+        label.col-sm-4.control-label Agent 1
+        .col-sm-8
+          input.form-control( ng-model="pibi.hydrant.agent1")
+      .form-group.col-sm-6
+        label.col-sm-4.control-label Agent 2
+        .col-sm-8
+          input.form-control( ng-model="pibi.hydrant.agent2")
+    fieldset
+      legend  Localisation
+      .row
+        label.col-sm-2.control-label Commune
+        .col-sm-4
+          select.form-control(ng-model="pibi.hydrant.commune ",ng-options=" obj.id as obj.nom for obj  in ref.commune")
+      .row
+        label.col-sm-2.control-label Lieu-dit
+        .col-sm-10
+          input.form-control(ng-model="pibi.hydrant.lieu_dit")
+      .row
+        label.col-sm-2.control-label Voie
+        .col-sm-4
+          input.form-control(ng-model="pibi.hydrant.voie")
+        label.col-sm-2.control-label Carrefour
+        .col-sm-4
+          input.form-control(ng-model="pibi.hydrant.voie2")
+      .row
+        label.col-sm-2.control-label Complément
+        .col-sm-10
+          textarea.form-control(ng-model="pibi.hydrant.complement")
+    fieldset
+      legend  Identification
+      .row
+        label.col-sm-2.control-label Numéro interne
+        .col-sm-4
+          input.form-control(ng-model="identification.id")
+      .row
+        label.col-sm-2.control-label Type
+        .col-sm-10
+          select.form-control(ng-model="pibi.hydrant.nature",ng-options=" obj.id as obj.nom for obj  in ref.type_hydrant_nature")
+      .row
+        label.col-sm-2.control-label Diamètre
+        .col-sm-4
+          select.form-control(ng-model="pibi.pibi.diametre",ng-options=" obj.id as obj.nom for obj  in ref.type_hydrant_diametre")
+      .row
+        label.col-sm-2.control-label Identification.SCP
+        .col-sm-10
+          input.form-control(ng-model="pibi.pibi.numeroscp")
+  div(ng-show="tabs.verification.active")
+    fieldset
+      legend Vérification hydraulique
+      .row
+        label.col-sm-offset-2.col-sm-2.control-label Débit (1 Bar)
+        .col-sm-4.input-group
+          input.form-control(ng-model="pibi.pibi.debit")
+          .input-group-addon  m3/h
+      .row
+        label.col-sm-offset-2.col-sm-2.control-label Pression statique
+        .col-sm-4.input-group
+          input.form-control(ng-model="pibi.pibi.pression")
+          .input-group-addon  bar
+      .row
+        label.col-sm-offset-2.col-sm-2.control-label Débit max
+        .col-sm-4.input-group
+          input.form-control(ng-model="pibi.pibi.debit_max")
+          .input-group-addon  m3/h
+      .row
+        label.col-sm-offset-2.col-sm-2.control-label Pression dynamique
+        .col-sm-4.input-group
+          input.form-control(ng-model="pibi.pibi.pression_dyn")
+          .input-group-addon  bar
+  div(ng-show="tabs.gestionnaire.active")
+    fieldset
+      legend Element de MCO
+      .form-group.col-sm-4
+        label.col-sm-3.control-label Marque
+        .col-sm-9
+          select.form-control(ng-model="pibi.pibi.marque",ng-options=" obj.id as obj.nom for obj  in ref.type_hydrant_marque")
+      .form-group.col-sm-4
+        label.col-sm-3.control-label Modèle
+        .col-sm-9
+          select.form-control(ng-model="pibi.pibi.modele ",ng-options=" obj.id as obj.nom for obj  in modeleFromBrand()")
+      // .form-group.col-sm-4
+        label.col-sm-6.control-label Année de fabrication
+        .col-sm-6
+          input.form-control(ng-model="gestionnaire.year",type="number")
+    fieldset
+      legend Gestionnaire
+      .row
+        label.col-sm-2.control-label Domaine
+        .col-sm-10
+          select.form-control(ng-model="pibi.hydrant.domaine",ng-options=" obj.id as obj.nom for obj  in ref.type_hydrant_domaine")
+      .row
+        label.col-sm-2.control-label Gestionnaire point d'eau
+        .col-sm-10
+          input.form-control(ng-model="pibi.hydrant.gest_point_eau")
+      .row
+        label.col-sm-2.control-label Gestionnaire réseau
+        .col-sm-10
+          input.form-control(ng-model="pibi.pibi.gest_reseau")
+    fieldset
+      legend Divers
+      .row
+        label.col-sm-2.control-label Courrier/Convention
+        .col-sm-10
+          select.form-control(ng-model="pibi.pibi.courrier")
+      .row
+        label.control-label.col-sm-2 Photo
+        .form-control-wrapper.col-sm-10(fileinput)
+          input.form-control.empty(type="text",readonly="",placeHolder="parcourir")
+          input#inputFile(type="file",multiple="" )
+  div(ng-show="tabs.details.active")
+    .col-sm-6
+      .form-group
+        .checkbox
+          label
+            input(type="checkbox",ng-click="toggleToutAfficher()")
+            | Tout afficher {{pibi.hydrant.nature}}
+      div(style="background-color:white;height:500px")
+        h3.pull-right {{critere}} / 9
+        .form-group(ng-repeat="anomalie in currentAnomalies()")
+          .checkbox.radio-primary
+            label
+              input.bs-material(type="checkbox", ng-model="anomalie.checked")
+              span.check
+              | {{anomalie.nom}} {{anomalie.nature}}
+        a.btn.btn-primary(ng-click="prevCritere()") prev
+        a.btn.btn-primary.pull-right(ng-click="nextCritere()")  next
+    .col-sm-6
+      label.control-label Observations
+      textarea.form-control(ng-model="pibi.hydrant.observation",style="height:520px")
+    .clearfix
+
+  a.btn.btn-primary.btn-block(ng-click="save()") Enregistrer

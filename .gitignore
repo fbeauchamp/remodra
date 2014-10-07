@@ -1,0 +1,7 @@
+client/bower_components
+client/node_modules
+client/build
+server/node_modules
+.idea
+client/.idea
+server/.idea
