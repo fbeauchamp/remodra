@@ -25,7 +25,8 @@
     "angular-bootstrap": "~0.11.2",
     "lodash": "~2.4.1",
     "angular-leaflet": "~0.7.8",
-    "fontawesome": "~4.2.0"
+    "fontawesome": "~4.2.0",
+    "leaflet-layerjson": "https://github.com/stefanocudini/leaflet-layerJSON.git#~0.1.5"
   },
   "resolutions": {
     "angular": "~1.3"

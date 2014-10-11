@@ -1,0 +1,21 @@
+html
+    header
+        meta(charset="utf-8")
+    body
+
+        h1 Tournée
+
+        table
+            tr
+                th Fait
+                th Adresse
+                th Dernier statut
+                th Dernière visite
+            - for (var i = 0; i < 10; ++i) {
+                tr
+                    td
+                        input(type="checkbox")
+                    td 4 place de la fontaine - HURIGNY
+                    td DISPO
+                    td 24/08/2012
+            - }

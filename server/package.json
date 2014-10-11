@@ -8,7 +8,9 @@
     "lodash": "^2.4.1",
     "node-static": "^0.7.3",
     "pg": "~1.1.2",
-    "coffee-script": "~1.8.0"
+    "coffee-script": "~1.8.0",
+    "jade": "~1.7.0",
+    "wkhtmltopdf": "~0.1.5"
   },
   "author": "florent BEAUCHAMP <fbeauchamp@sdis71.fr>",
   "description": "une application web pour les poteaux",

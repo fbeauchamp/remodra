@@ -140,16 +140,37 @@ app.get '/pibi/:id' , (req,res)->
       res.write e.message
       res.end()
 
+app.get '/geojson.json' , (req,res)->
+  persister.query('SELECT *,ST_AsGeoJSON(ST_Transform(geometrie, 4326)) as geometrie  from remocra.hydrant
+    WHERE ST_X((ST_Transform(geometrie, 4326))) BETWEEN $1 and $2
+  AND ST_Y((ST_Transform(geometrie, 4326))) BETWEEN $3 AND $4   ',
+    [req.query.lon1,req.query.lon2,req.query.lat1,req.query.lat2])
+  .then (pgres)->
+      json = []
+      _.each pgres.rows, (row)->
+
+        json.push
+          type:'feature'
+          geometry:JSON.parse row.geometrie
+          properties:
+            _.clone _.omit row , 'geometrie'
+
+      res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+      res.setHeader 'Content-type' , 'application/json'
+      res.charset = 'utf-8'
+      res.write JSON.stringify json
+      res.end()
+  .catch (e)->
+    res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+    res.setHeader 'Content-type' , 'application/json'
+    res.charset = 'utf-8'
+    res.write '[]'
+    res.end()
+
+app.get 'pdf' , (req,res)->
+
+
 
 app.use('/', express.static('../client/build/'));
 
 server = app.listen(9001);
-
-###
-.then (pgres)->
-  pibi.pena=pgres.rows[0]
-  persister.where 'remocra.hydrant_anomalies' ,  {hydrant:id}
-.then (pgres)->
-  pibi.anomalies=pgres.rows
-  persister.get 'remocra.hydrant_pibi' , id
-###

@@ -78,7 +78,8 @@ gulp.task('libJS', function() {
     './bower_components/leaflet/dist/leaflet-src.js',
     './bower_components/angular-leaflet/dist/angular-leaflet-directive.js',
     './bower_components/bootstrap-material-design/scripts/ripples.js',
-    './bower_components/angular-route/angular-route.js'
+    './bower_components/angular-route/angular-route.js',
+    './bower_components/leaflet-layerjson/dist/leaflet-layerjson.src.js'
     ]).pipe(concat('lib.js'))
       .pipe(gulp.dest('./build'));
 });

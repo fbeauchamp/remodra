@@ -1,5 +1,5 @@
 angular.module 'remodra-main'
-.controller 'PibiCtrl', ($scope,Remocra) ->
+.controller 'PibiCtrl', ($scope,Remocra,$routeParams) ->
 
   $scope.tabs=
     identification :
@@ -55,7 +55,7 @@ angular.module 'remodra-main'
       $scope.ref=res.data
       console.log 'got ref ';
       console.log $scope.ref
-      Remocra.get 1698
+      Remocra.get $routeParams.id
         .then (res)->
           anomalies =[]
           console.log 'got obj ';

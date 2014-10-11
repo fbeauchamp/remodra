@@ -9,7 +9,28 @@ html(lang="en")
     link(href="app.css" rel="stylesheet")
 
   body(ng-app="remodra")
-    div(class="container" ng-view="")
+    .container
+      .navbar.navbar-default
+        .navbar-header
+          button.navbar-toggle( type="button"  class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse")
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href="javascript:void(0)") RemoDra
+        .navbar-collapse.collapse.navbar-responsive-collapse
+          ul.nav.navbar-nav
+            li.active
+              a(href="#") Accueil
+            li
+              a(href="#/map") Carte
+            li
+              a(href="#/bipi") Tournée de poteau
+            li
+              a(href="javascript:void(0)") Annuaire
+          form.navbar-form.navbar-right
+            input.form-control.col-lg-8(type="text" ,placeholder="Rechercher")
+
+      div(ng-view="")
     script(src="lib.js")
     script(src="templates.js")
     script(src="app.js")

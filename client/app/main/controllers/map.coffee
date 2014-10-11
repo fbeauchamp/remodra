@@ -4,9 +4,9 @@ angular
     console.log ' in carte controller'
 
     $scope.center =
-      lat: 46.0
-      lng: 4.0
-      zoom: 12
+      lat:  46.3
+      lng: 4.83
+      zoom: 14
 
     $scope.markers = {};
     $scope.events =
@@ -16,6 +16,7 @@ angular
     $scope.clickAction = 'select';
 
     leafletData.getMap().then (map)->
+      L.Icon.Default.imagePath = 'images'
       ClickControl = L.Control.extend
         options:
           position: 'topleft'
@@ -50,6 +51,25 @@ angular
           container
 
       map.addControl(new ClickControl())
+
+      l = new L.LayerJSON
+          propertyLoc:'geometry.coordinates'
+          minZoom: 14
+          url: "/geojson.json?lat1={lat1}&lat2={lat2}&lon1={lon1}&lon2={lon2}"
+          onEachMarker: (json,marker)->
+            marker.on 'click' , ()->
+              html = '<table><tr><th></th><th></th></tr>';
+              _.each json.properties , (val,key)->
+                if val
+                  html+='<tr><td>'+key+'</td><td>'+val+'</td>'
+              html += '</table>';
+              html +='<a class="btn btn-primary" href="#/pibi/'+json.properties.id+'">Modifier</a>';
+              marker
+                .bindPopup html
+                .openPopup()
+
+
+      map.addLayer(l);
 
       $scope.eventDetected = "No events yet...";
     _.each ['click'] , (event_type)->
