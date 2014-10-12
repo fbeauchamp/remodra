@@ -1,0 +1,108 @@
+h2 Annuaire
+
+.row
+  .col-sm-9
+    div(
+    ng-repeat="contact in contacts | filter:filterContact"
+    )
+      h3
+       |{{contact.nom}} {{contact.prenom}}
+       a.pull-right.btn.btn-default(data-toggle="modal",data-target="#modal-form-add-contact",ng-click="editContact(contact)") Modifier
+      div(ng-if="contact.tel_fixe").
+        Téléphone fixe : {{contact.tel_fixe}}
+      div(ng-if="contact.tel_portable").
+        Téléphone portable : {{contact.tel_fixe}}
+      div(ng-if="contact.email").
+        Adresse email : {{contact.email}}
+    a.btn.btn-primary(data-toggle="modal",data-target="#modal-form-add-contact",ng-click="resetContact()") Ajouter
+  .col-sm-3
+    .panel.panel-default
+      .panel-heading
+        h3.panel-title Structure
+      .panel-body
+        .btn.btn-block(
+        ng-class="{'btn-info':(structure==selected_structure || !selected_structure)}"
+        ng-repeat="structure in structures"
+        ng-click="toggleFilter('selected_structure',structure)"
+        ) {{structure}}
+    .panel.panel-default
+      .panel-heading
+        h3.panel-title Fonction
+      .panel-body
+        .btn.btn-block(
+        ng-class="{'btn-info':(role==selected_role || !selected_role)}"
+        ng-repeat="role in roles"
+        ng-click="toggleFilter('selected_role',role)"
+        ) {{role}}
+
+
+.modal.fade#modal-form-add-contact(tabindex="-1",role="dialog")
+  .modal-dialog.modal-lg
+    .modal-content
+      form.form-horizontal(role="form")
+        .modal-header
+          button.close(type="button",data-dismiss="modal")
+            span(aria-hidden="true") &times
+            span.sr-only Close
+          h4.modal-title {{modal_title}}
+        .modal-body
+          .form-group
+            label.col-sm-2(for="") Nom
+            .col-sm-4
+              input.form-control(ng-model="new_contact.nom")
+            label.col-sm-2(for="") Prenom
+            .col-sm-4
+              input.form-control(ng-model="new_contact.prenom")
+          .form-group
+            label.col-sm-2(for="") Structure
+            .col-sm-4
+              select.form-control(ng-model="new_contact.structure",ng-options="o as o for o in structures")
+            label.col-sm-2(for="") Fonction
+            .col-sm-4
+              select.form-control(ng-model="new_contact.role",ng-options="o as o for o in roles")
+              p.help-block Fonction au sein de la structure
+          .form-group
+            label.col-sm-2(for="") Priorité
+            .col-sm-4
+              select.form-control(ng-model="new_contact.priority")
+                option(value="0") Ne pas contacter
+                option(value="1") 1
+                option(value="2") 2
+                option(value="3") 3
+                option(value="4") 4
+                option(value="5") 5
+            .col-sm-6
+              p.help-block En cas de besoin, le CODIS essayera de joindre la personne ayant la  priorité 1 puis la 2 et ainsi de suite
+          .form-group
+            label.col-sm-2(for="") Tel Fixe
+            .col-sm-4
+              input.form-control(ng-model="new_contact.tel_fixe")
+            label.col-sm-2(for="") Tel portable
+            .col-sm-4
+              input.form-control(ng-model="new_contact.tel_portable")
+          .form-group
+            label.col-sm-2(for="") Adresse email
+            .col-sm-10
+              input.form-control(ng-model="new_contact.email")
+
+          .form-group
+            label.col-sm-2 Autorisations
+            .col-sm-10
+              .checkbox.radio-primary
+                label
+                  input.bs-material(type="checkbox" )
+                  span.check Recevoir les bulletins quotidiens d'activité
+              .checkbox.radio-primary
+                label
+                  input.bs-material(type="checkbox",ng-disabled="new_contact.priority==0" )
+                  span.check
+                    | Recevoir les notifications en temps réel par mail&nbsp;
+                    a(href="http://mobops.sdis71.fr",target="_blank") (mobops)
+              .checkbox.radio-primary
+                label
+                  input.bs-material(type="checkbox",ng-disabled="new_contact.priority==0" )
+                  span.check
+                    | Recevoir les notifications en temps réel par sur mon smartphone android&nbsp;
+                    a(href="http://mobops.sdis71.fr",target="_blank") (Installer l'application et activer le smartphone)
+        .modal-footer
+          a.btn.btn-primary(data-dismiss="modal") Enregistrer
