@@ -6,6 +6,12 @@ angular.module 'remodra', [ 'ngRoute','remodra-main','templates','leaflet-direct
       .when '/pibi/:id?' ,
         templateUrl: 'main/templates/pibi-form.html'
         controller: 'PibiCtrl'
+      .when '/liste-tournee/:id?' ,
+        templateUrl: 'main/templates/liste-tournee.html'
+        controller: 'ListetourneeCtrl'
+      .when '/detail-tournee/:id?' ,
+        templateUrl: 'main/templates/detail-tournee.html'
+        controller: 'DetailtourneeCtrl'
       .when '/carte' ,
         templateUrl: 'main/templates/map.html'
         controller: 'MapCtrl'

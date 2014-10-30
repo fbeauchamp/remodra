@@ -1,0 +1,31 @@
+h1 liste des tournées
+
+table.table.table-striped
+  thead
+    tr
+      th
+      th #
+      th Nom
+      th Commune
+      th taille
+      th Action
+  tbody
+    tr(ng-repeat="tournee in tournees")
+      td(style="background-color:{{tournee.color}};width:20px;height:20px")
+      td {{tournee.id}}
+      td {{tournee.name}}
+      td {{tournee.city}}
+      td {{tournee.size}}
+      td
+        a.btn.btn-default(ng-href="#/detail-tournee/{{tournee.id}}") Voir
+    tr
+      td(style="background-color:#0000FF;width:20px;height:20px")
+      td
+      td Point d'eau de mon secteur sans tournée
+      td
+      td {{sanstournee.size}}
+      td
+        a.btn.btn-default(ng-href="#/detail-tournee/") Voir
+    tr
+      td(colspan="6")
+        a.btn.btn-block.btn-primary(ng-href="#/modifie-tournee/") Créer une nouvelle tournée

@@ -55,7 +55,7 @@ angular.module 'remodra-main'
       $scope.ref=res.data
       console.log 'got ref ';
       console.log $scope.ref
-      Remocra.get $routeParams.id
+      Remocra.pibi.get $routeParams.id
         .then (res)->
           anomalies =[]
           console.log 'got obj ';
@@ -78,6 +78,6 @@ angular.module 'remodra-main'
 
     $scope.pibi.anomalies =anomalies
 
-    Remocra.save($scope.pibi)
+    Remocra.pibi.save($scope.pibi)
       .then ( )->
         console.log 'success'

@@ -1,0 +1,62 @@
+h1
+  | {{tournee.name}}
+  a.btn.btn-primary.pull-right(ng-href="#/modifie-tournee/{{tournee.id}}") Imprimer
+
+h2
+  | couleur
+  span(style="background-color:{{tournee.color}};display:inline-block;width:20px;height:20px;margin:0 10px")
+
+h2(ng-show="tournee.pibis.length>0") liste des points d'eaux
+
+table.table.table-striped
+  thead(ng-show="tournee.pibis.length>0")
+    tr
+      th #
+      th emplacement
+      th statut
+      th dernière visite
+      th action
+  tbody
+    tr(ng-repeat="pibi in tournee.pibis")
+      td {{pibi.id}}
+      td {{pibi.adresse}}
+      td {{pibi.statut}}
+      td {{pibi.date}}
+      td
+        a.btn.btn-danger(ng-click="remove(pibi.id)") supprimer
+    tr
+      td(colspan="5")
+        a.btn.btn-primary.btn-block(data-toggle="modal",data-target="#modal-add-pibi",ng-click="reset()") ajouter des PIBI
+
+
+
+.modal.fade#modal-add-pibi
+  .modal-dialog.modal-lg
+    .modal-content
+      .modal-header
+        button.close(type="button",data-dismiss="modal")
+          span(aria-hidden="true") &times;
+          span.sr-only Close
+        h4.modal-title Sélectionnez les points d'eaux à ajouter
+        p(ng-show="$scope.form.nb > 0") {{$scope.form.nb}} sélectionné(s)
+      .modal-body
+        table.table.table-striped
+          thead
+            tr
+              th #
+              th emplacement
+              th statut
+              th dernière visite
+              th sélectionner
+          tbody
+            tr(ng-repeat="pibi in availablepibis")
+              td {{pibi.id}}
+              td {{pibi.adresse}}
+              td {{pibi.statut}}
+              td {{pibi.date}}
+              td
+                input(type="checkbox",ng-model="pibi.selected")
+
+      .modal-footer
+        button.btn.btn-default(type="button",data-dismiss="modal") Annuler
+        button.btn.btn-primary(type="button",data-dismiss="modal",ng-click="add()") Ajouter

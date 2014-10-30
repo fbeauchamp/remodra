@@ -6,9 +6,15 @@ angular
   return  {
     reference:()->
       $http.get '/ref.json'
-    get: (id)->
-      $http.get '/pibi/'+id
-    save: (hydrant)->
-      $http.post '/pibi/'+hydrant?.hydrant?.id , hydrant
+    pibi:
+      get: (id)->
+        $http.get '/pibi/'+id
+      save: (hydrant)->
+        $http.post '/pibi/'+hydrant?.hydrant?.id , hydrant
+    tournee:
+      all: ->
+        $http.get '/tournees'
+      save: (tournee)->
+        $http.post '/pibi/'+tournee?.id , tournee
 
   }
