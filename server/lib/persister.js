@@ -21,11 +21,25 @@ if ('prod' == env) {
     console.log('dev');
     config = require('../config.dev.js');
 }
+if(!!config.connString){
+  client = new pg.Client(config.connString);
+  client.connect();//@todo watchdog of connexion
 
-client = new pg.Client(config.connString);
+  client.on('notification', function (data) {
+    if (!listeners[data.channel]) {
+      return;
+    }
+    var payload = decodePayload(data.payload);
+    if (listeners[data.channel]) {
+      _.each(listeners[data.channel], function (fn) {
+        fn(payload);
+      });
+    }
+  });
+
+}
 
 resetCounters();
-client.connect();//@todo watchdog of connexion
 
 
 function resetCounters() {
@@ -286,18 +300,6 @@ function decodePayload(payload) {
 }
 
 var listeners = [];
-client.on('notification', function (data) {
-    if (!listeners[data.channel]) {
-        return;
-    }
-    var payload = decodePayload(data.payload);
-    if (listeners[data.channel]) {
-        _.each(listeners[data.channel], function (fn) {
-            fn(payload);
-        });
-    }
-});
-
 
 var Persister = {
     hstoreToJSON: function (row) {
