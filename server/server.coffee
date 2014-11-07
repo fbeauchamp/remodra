@@ -1,13 +1,16 @@
 persister = require './lib/persister.js'
 _ = require 'lodash'
+require 'coffee-script/register'
 Promise = require 'bluebird'
 express = require 'express'
+User = require('./model/user')
 app = express()
 mssql = require 'mssql'
 'use strict'
 
 env = process.env.NODE_ENV || 'prod';
 config = require './config.dev.js'
+
 
 mssql.connect config.mssql , (err)->
   console.log 'MSSQSL';
@@ -169,6 +172,35 @@ app.get '/geojson.json' , (req,res)->
     res.charset = 'utf-8'
     res.write '[]'
     res.end()
+
+
+
+app.get '/annuaire.json', (req,res)->
+  console.log ('get annnuaire')
+  #todo : handle session
+  user_id = 1
+  user = new User(user_id)
+  fiches =[]
+  user
+    .populate()
+    .then ()->
+      user.getTerritoiresInteresct()
+    .then (territoires)->
+      Promise.all  _.map territoires , (territoire)->
+        territoire.getStructures()
+    .then (structures)->
+      structures = _.compact _.flatten  structures , true # the promise result is an arry aof array of structures
+      structures = _.uniq structures , 'id'
+      Promise.all  _.map structures , (structure)->
+        structure.getFiches({populate_level:1})
+    .then (fiches)->
+      fiches = _.compact _.flatten  fiches , true
+      fiches = _.uniq fiches , 'id'
+      console.log fiches
+      # todo : add structure this user admin
+    .catch (e)->
+      console.log e
+
 
 app.get '/contacts' , (req,res)->
   request = new mssql.Request()
