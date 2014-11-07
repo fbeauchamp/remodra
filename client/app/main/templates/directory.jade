@@ -1,25 +1,30 @@
+a.btn.btn-primary.pull-right(data-toggle="modal",data-target="#modal-form-add-contact",ng-click="resetContact()") Créer une fiche
+
 h2 Annuaire
+
 
 .row
   .col-sm-9
     div(
-    ng-repeat="contact in contacts | filter:filterContact"
+    ng-repeat="contact in contacts | filter:filterContact | limitTo:10"
     )
+      a.pull-right.btn.btn-default(data-toggle="modal",data-target="#modal-form-add-contact",ng-click="editContact(contact)") Modifier
       h3
        |{{contact.nom}} {{contact.prenom}}
-       a.pull-right.btn.btn-default(data-toggle="modal",data-target="#modal-form-add-contact",ng-click="editContact(contact)") Modifier
-      div(ng-if="contact.tel_fixe").
-        Téléphone fixe : {{contact.tel_fixe}}
-      div(ng-if="contact.tel_portable").
-        Téléphone portable : {{contact.tel_fixe}}
-      div(ng-if="contact.email").
-        Adresse email : {{contact.email}}
-    a.btn.btn-primary(data-toggle="modal",data-target="#modal-form-add-contact",ng-click="resetContact()") Ajouter
+      p
+        strong Structure
+        | : {{contact.structure}}
+      p
+        strong Fonction
+        | : {{contact.role}}
+      p(ng-repeat="(type,valeur) in contact.contact")
+        | {{type}} : {{ valeur}}
+
   .col-sm-3
     .panel.panel-default
       .panel-heading
         h3.panel-title Structure
-      .panel-body
+      .panel-body(style="max-height:200px;overflow-y:scroll;overflow-x:hidden")
         .btn.btn-block(
         ng-class="{'btn-info':(structure==selected_structure || !selected_structure)}"
         ng-repeat="structure in structures"

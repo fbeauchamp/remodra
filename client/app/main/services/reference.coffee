@@ -11,4 +11,5 @@ angular
     save: (hydrant)->
       $http.post '/pibi/'+hydrant?.hydrant?.id , hydrant
 
+
   }

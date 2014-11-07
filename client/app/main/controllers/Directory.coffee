@@ -1,5 +1,5 @@
 angular.module 'remodra-main'
-.controller 'DirectoryCtrl', ($scope) ->
+.controller 'DirectoryCtrl', ($scope,$http) ->
 
   $scope.roles =[]
   $scope.structures =[]
@@ -17,6 +17,15 @@ angular.module 'remodra-main'
     role : 'Chef de centre'
     nom : 'DELAIE'
     prenom : 'Philippe'
+
+  $http.get '/contacts'
+    .then (res)->
+      console.log 'contacts'
+      $scope.contacts = res.data
+      $scope.structures = _.uniq _.compact _.pluck $scope.contacts , 'structure'
+      $scope.roles = _.uniq _.compact _.pluck $scope.contacts , 'role'
+
+
 
   $scope.new_contact =
     priority : 0

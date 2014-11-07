@@ -3,12 +3,15 @@ _ = require 'lodash'
 Promise = require 'bluebird'
 express = require 'express'
 app = express()
-
+mssql = require 'mssql'
 'use strict'
 
 env = process.env.NODE_ENV || 'prod';
 config = require './config.dev.js'
 
+mssql.connect config.mssql , (err)->
+  console.log 'MSSQSL';
+  console.log err
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.multipart());
@@ -166,6 +169,36 @@ app.get '/geojson.json' , (req,res)->
     res.charset = 'utf-8'
     res.write '[]'
     res.end()
+
+app.get '/contacts' , (req,res)->
+  request = new mssql.Request()
+  request.query "SELECT  f.fiche_id as id,nom,prenom,label_gipsi as structure,r.label as role, valeur,fdt.label as type_contact,commentaire
+    FROM [ANNUAIRE].[dbo].[FICHE] f
+    inner join [ANNUAIRE].[dbo].[COMMUNE] c  on c.commune_id = f.commune_id
+    inner join [ANNUAIRE].[dbo].rubrique_fiche rf on rf.fiche_id = f.fiche_id
+    inner join [ANNUAIRE].[dbo].rubrique r on r.rubrique_id = rf.rubrique_id
+    inner join [ANNUAIRE].[dbo].fiche_donnee fd on fd.fiche_id = f.fiche_id
+    inner join [ANNUAIRE].[dbo].fiche_donnee_type fdt on fdt.type_id = fd.type_id
+    WHERE r.label IN ('MAIRE','ELU 2','ELU 3','ELU 4','ELU 5')
+    "
+    , (err,rs)->
+      json =[]
+      _.each rs , (row)->
+        if json[row.id]
+          json[row.id].contact[row.type_contact.toLowerCase()] = row.valeur
+        else
+          row.contact={}
+          row.contact[row.type_contact.toLowerCase()]=row.valeur
+          delete row.type_contact
+          delete row.valeur
+          delete row.commentaire
+          json[row.id]= _.clone row
+
+      res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+      res.setHeader 'Content-type' , 'application/json'
+      res.charset = 'utf-8'
+      res.write JSON.stringify _.compact json
+      res.end()
 
 app.get 'pdf' , (req,res)->
 
