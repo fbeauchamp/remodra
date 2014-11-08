@@ -7,11 +7,11 @@ angular.module 'remodra-main'
     color : '#F00'
     pibis:[]
 
-  $scope.tournee.pibis.push
-    id:1
-    adresse: "à l'angle de toto et tata"
-    statut: "DISPO"
-    date:"30/01/2014"
+  Remocra.tournee.get 11
+    .then (pibis)->
+      console.log ' got it'
+      console.log pibis
+      $scope.tournee.pibis = pibis
 
   $scope.availablepibis = []
   $scope.availablepibis.push

@@ -4,6 +4,7 @@ require 'coffee-script/register'
 Promise = require 'bluebird'
 express = require 'express'
 User = require('./model/user')
+PIBI = require('./model/pibi')
 app = express()
 mssql = require 'mssql'
 'use strict'
@@ -11,10 +12,10 @@ mssql = require 'mssql'
 env = process.env.NODE_ENV || 'prod';
 config = require './config.dev.js'
 
-
-mssql.connect config.mssql , (err)->
-  console.log 'MSSQSL';
-  console.log err
+if !!config.mssql
+  mssql.connect config.mssql , (err)->
+    console.log 'MSSQSL';
+    console.log err
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.multipart());
@@ -41,7 +42,6 @@ _.each sources_ref_activable , (source)->
     .then (res)->
       references[source.split('.')[1]]=res.rows
     .catch (e)->
-      console.log source
       console.log e
 
 
@@ -56,7 +56,6 @@ _.each sources_ref , (source)->
   .then (res)->
     references[source.split('.')[1]]=res.rows
   .catch (e)->
-    console.log source
     console.log e
 
 
@@ -66,7 +65,6 @@ persister.query "select id,nom,insee,pprif,code from remocra.commune" , []
     _.each res.rows , (row)->
       references['commune'][row.id]=row
   .catch (e)->
-    console.log source
     console.log e
 
 
@@ -74,7 +72,6 @@ persister.query "select distinct anomalie, nature, val_indispo_terrestre from re
   .then (res)->
     references['type_hydrant_anomalie_nature'] =res.rows
   .catch (e)->
-    console.log source
     console.log e
 
 
@@ -121,25 +118,13 @@ app.post '/pibi/:id' , (req,res)->
 
 app.get '/pibi/:id' , (req,res)->
   id = req.params.id
-  pibi ={}
-  persister.get 'remocra.hydrant' , id
-    .then (pgres)->
-      pibi.hydrant=pgres.rows[0]
-      persister.get 'remocra.hydrant_pena' , id
-    .then (pgres)->
-      console.log pgres
-      pibi.pena=pgres.rows[0]
-      persister.get 'remocra.hydrant_pibi' , id
-    .then (pgres)->
-      console.log pgres
-      pibi.pibi=pgres.rows[0]
-      persister.where 'remocra.hydrant_anomalies' ,  {hydrant:id}
-    .then (pgres)->
-      pibi.anomalies=pgres.rows ||[]
+  pibi =new PIBI(id)
+  pibi.populate()
+    .then ->
       res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
       res.setHeader 'Content-type' , 'application/json'
       res.charset = 'utf-8'
-      res.write JSON.stringify pibi
+      res.write JSON.stringify pibi.details
       res.end()
     .catch (e)->
       res.write 'fail'
@@ -172,6 +157,7 @@ app.get '/geojson.json' , (req,res)->
     res.charset = 'utf-8'
     res.write '[]'
     res.end()
+    console.log e
 
 
 
@@ -231,6 +217,47 @@ app.get '/contacts' , (req,res)->
       res.charset = 'utf-8'
       res.write JSON.stringify _.compact json
       res.end()
+
+app.get '/tournees' , (req,res)->
+  persister.where 'remocra.tournee' , {}
+  .then (pgres)->
+    res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+    res.setHeader 'Content-type' , 'application/json'
+    res.charset = 'utf-8'
+    res.write JSON.stringify pgres.rows
+    res.end()
+  .catch (e)->
+    res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+    res.setHeader 'Content-type' , 'application/json'
+    res.charset = 'utf-8'
+    res.write '[]'
+    res.end()
+    console.log e
+
+app.get '/tournee/:id' , (req,res)->
+  id = req.params.id
+  persister.where 'remocra.hydrant' , {tournee:id}
+    .then (res)->
+      pibis = _.map res.rows , (row)->
+        new PIBI row.id
+      Promise.all _.map pibis , (pibi)->
+        pibi.populate()
+    .then (populated)->
+
+      pibis = _.flatten populated , true
+
+      res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+      res.setHeader 'Content-type' , 'application/json'
+      res.charset = 'utf-8'
+      res.write JSON.stringify _.pluck pibis , 'details'
+      res.end()
+    .catch (e)->
+      res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+      res.setHeader 'Content-type' , 'application/json'
+      res.charset = 'utf-8'
+      res.write '[]'
+      res.end()
+      console.log e
 
 app.get 'pdf' , (req,res)->
 

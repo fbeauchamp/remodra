@@ -18,10 +18,10 @@ table.table.table-striped
       th action
   tbody
     tr(ng-repeat="pibi in tournee.pibis")
-      td {{pibi.id}}
-      td {{pibi.adresse}}
-      td {{pibi.statut}}
-      td {{pibi.date}}
+      td {{pibi.hydrant.id}}
+      td {{pibi.hydrant.complement}}
+      td {{pibi.hydrant.dispo_terrestre}}
+      td {{pibi.hydrant.date_verif}}
       td
         a.btn.btn-danger(ng-click="remove(pibi.id)") supprimer
     tr

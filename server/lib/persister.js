@@ -161,7 +161,6 @@ function getFieldsDesc(schema_name, table_name) {
                             fields[row.column_name] = row.udt_name;
                     }
                 });
-                console.log(fields);
                 resolve( {
                     table: table_name,
                     schema: schema_name,
@@ -571,7 +570,8 @@ var Persister = {
                     fields.push('hstore_to_matrix(' + desc.hstore_name + ') as ' + desc.hstore_name);
                 }
                 var sql = "SELECT DISTINCT  " + fields.join(',') + '  FROM  "' + desc.schema + '"."' + doubleQuoteEscape(desc.table) + '"';
-                sql += " WHERE " + fields_placeholders.join(' AND ');
+                if(fields_placeholders.length)
+                    sql += " WHERE " + fields_placeholders.join(' AND ');
 
                 return Persister.query(sql, values).then(function (res) {
                     res.rows.map(Persister.hstoreToJSON);
