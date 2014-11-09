@@ -23,10 +23,8 @@ table.table.table-striped.table-bordered
       td {{pibi.hydrant.complement}}
       td {{pibi.hydrant.dispo_terrestre}}
       td {{pibi.hydrant.date_verif}}
-      td {{pibi.hydrant.geometrie}}
-      td
-        select.form-control(ng-model="pibi.hydrant.tournee",ng-options="tournee.id for tournee in tournees")
+      td {{pibi.hydrant.tournee}}
       td
         a.btn.btn-default(ng-href="#/pibi/detail/{{pibi.hydrant.id}}") détail
-        a.btn.btn-default(ng-href="#/carte/?la=") localiser
+        a.btn.btn-default(ng-href="#/carte/?lat={{pibi.hydrant.lat}}&lng={{pibi.hydrant.lng}}") localiser
 

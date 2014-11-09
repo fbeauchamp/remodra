@@ -26,6 +26,8 @@ table.table.table-striped
       td {{pibi.hydrant.date_verif}}
       td
         a.btn.btn-danger(ng-click="remove(pibi.id)") supprimer
+        a.btn.btn-default(ng-href="#/carte/?lat={{pibi.hydrant.lat}}&lng={{pibi.hydrant.lng}}") localiser
+
 
 .modal.fade#modal-add-pibi
   .modal-dialog.modal-lg

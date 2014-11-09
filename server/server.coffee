@@ -84,6 +84,25 @@ app.get '/ref.json' , (req,res)->
   res.write JSON.stringify references
   res.end()
 
+
+app.post '/pibi/:id/tournee' , (req,res)->
+  console.log req.body
+  tournee  = req.body.tournee
+  id = req.params.id
+  console.log 'will put tournee '+tournee+' to '+id
+  persister.upsert 'remocra.hydrant' , {id:id,tournee:tournee}
+    .then ()->
+      console.log " all done"
+
+      res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+      res.setHeader 'Content-type' , 'application/json'
+      res.charset = 'utf-8'
+      res.write JSON.stringify {code:200,errors:[]}
+      res.end()
+    .catch (e)->
+      console.log e
+      res.end()
+
 app.post '/pibi/:id' , (req,res)->
   to_be_saved = req.body
   console.log 'will save '
@@ -135,9 +154,10 @@ app.get '/pibi/:id' , (req,res)->
 
 app.get '/pibis' , (req,res)->
   pibis = {}
-  persister.where('remocra.hydrant',{})
+  persister.query 'select *,ST_X((ST_Transform(geometrie, 4326))) as lng,ST_Y((ST_Transform(geometrie, 4326))) as lat from remocra.hydrant' , []
     .then (pg_res)->
       pibis = _.map pg_res.rows , (row)->
+        delete row.geometrie
         row = _.transform row, (res, v, k) ->
           if v!= null
             res[k] = v

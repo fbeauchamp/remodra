@@ -1,6 +1,6 @@
 h2 Carte
 
-div( )
+div(style="position:relative")
   leaflet(
     center="center",
     event-broadcast="events",
@@ -8,3 +8,22 @@ div( )
 
     height="600px"
     )
+  .panel.panel-default(ng-show="selection.length",style="position:absolute;top:0.5em;right:0.5em;width:250px;bottom:0.5em;background-color:rgba(255,255,255,0.8)")
+    .panel-heading
+      h3.panel-title
+        | selection
+        a.btn.btn-warning.btn-sm.pull-right(ng-click="emptySelection()") Vider
+    .panel-body(style="padding-left:0;padding-right:0")
+
+      table.table.table-striped
+        tr(ng-repeat="selected in selection")
+          td
+            | {{selected.options.numero}}
+            a.btn.btn-danger.pull-right(ng-click="enleverSelection()",title="Enlever de la selection") -
+
+      p
+        |tournée
+        select.form-control(ng-model="tournee",ng-options="tournee.id for tournee in tournees")
+
+        a.btn.btn-primary.btn-block(ng-click="ajouterTournee()",style="margin:0 1em",title="ajouter à cette tournée",ng-disabled="!tournee") + Ajouter à la tournée
+      p.clearfix

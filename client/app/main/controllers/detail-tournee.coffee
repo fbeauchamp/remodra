@@ -1,5 +1,7 @@
 angular.module 'remodra-main'
 .controller 'DetailtourneeCtrl', ($scope,Remocra,$routeParams) ->
+  console.log $routeParams
+  $scope.id = $routeParams.id
   $scope.tournee =
     id:1
     name: "Macon 1"
@@ -7,10 +9,10 @@ angular.module 'remodra-main'
     color : '#F00'
     pibis:[]
 
-  Remocra.tournee.get 11
+  Remocra.tournee.get parseInt $scope.id
     .then (pibis)->
       console.log ' got it'
-      console.log pibis
+      console.log pibis.length
       $scope.tournee.pibis = pibis
 
   $scope.availablepibis = []
