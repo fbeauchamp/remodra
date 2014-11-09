@@ -1,6 +1,7 @@
 angular.module 'remodra-main'
 .controller 'ListetourneeCtrl', ($scope,Remocra,$routeParams) ->
   $scope.tournees =[]
+  Remocra.pibi.all()
   Remocra.tournee.all()
     .then (tournees)->
       $scope.tournees = tournees

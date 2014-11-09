@@ -63,7 +63,7 @@ angular
                 if val
                   html+='<tr><td>'+key+'</td><td>'+val+'</td>'
               html += '</table>';
-              html +='<a class="btn btn-primary" href="#/pibi/'+json.properties.id+'">Modifier</a>';
+              html +='<a class="btn btn-primary" href="#/pibi/modifier/'+json.properties.id+'">Modifier</a>';
               marker
                 .bindPopup html
                 .openPopup()

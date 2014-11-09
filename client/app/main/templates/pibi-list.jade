@@ -1,0 +1,32 @@
+a.btn.btn-primary.pull-right(href="#/pibi/modifier/",data-toggle="modal",data-target="#modal-form-add-contact") Créer un PIBI
+
+h2 {{filtered.length}} PIBI
+
+table.table.table-striped.table-bordered
+  tr
+    th #
+    th
+      input.form-control(ng-model="filter.nom",placeholder="Nom")
+    th
+      input.form-control(ng-model="filter.emplacement",placeholder="Emplacement")
+
+    th
+      select.form-control(ng-model="filter.dispo",ng-options="obj.id as obj.label for obj  in dispos")
+    th dernière visite
+    th Tournée
+    th
+  tr(
+    ng-repeat="pibi in (filtered = (pibis | filter:filterPibi) | limitTo:10)"
+    )
+      td {{pibi.hydrant.id}}
+      td {{pibi.hydrant.numero}}
+      td {{pibi.hydrant.complement}}
+      td {{pibi.hydrant.dispo_terrestre}}
+      td {{pibi.hydrant.date_verif}}
+      td {{pibi.hydrant.geometrie}}
+      td
+        select.form-control(ng-model="pibi.hydrant.tournee",ng-options="tournee.id for tournee in tournees")
+      td
+        a.btn.btn-default(ng-href="#/pibi/detail/{{pibi.hydrant.id}}") détail
+        a.btn.btn-default(ng-href="#/carte/?la=") localiser
+

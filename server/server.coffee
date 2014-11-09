@@ -16,6 +16,7 @@ if !!config.mssql
   mssql.connect config.mssql , (err)->
     console.log 'MSSQSL';
     console.log err
+app.use(express.compress());
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.multipart());
@@ -131,6 +132,54 @@ app.get '/pibi/:id' , (req,res)->
       res.write e.message
       res.end()
 
+
+app.get '/pibis' , (req,res)->
+  pibis = {}
+  persister.where('remocra.hydrant',{})
+    .then (pg_res)->
+      pibis = _.map pg_res.rows , (row)->
+        row = _.transform row, (res, v, k) ->
+          if v!= null
+            res[k] = v
+        {id:row.id,hydrant:row}
+      persister.where('remocra.hydrant_pena',{})
+    .then (pg_res)->
+      _.each pg_res.rows , (row)->
+        row = _.transform row, (res, v, k) ->
+          if v!= null
+            res[k] = v
+        pibi =_.find pibis , {id:row.id}
+        pibi.pena =row if pibi
+      persister.where('remocra.hydrant_pibi',{})
+    .then (pg_res)->
+      _.each pg_res.rows , (row)->
+        row = _.transform row, (res, v, k) ->
+          if v!= null
+            res[k] = v
+        pibi =_.find pibis , {id:row.id}
+        pibi.pibi =row if pibi
+      persister.where('remocra.hydrant_anomalies',{})
+    .then (pg_res)->
+      _.each pg_res.rows , (row)->
+
+        row = _.transform row, (res, v, k) ->
+          if v!= null
+            res[k] = v
+        pibi =_.find pibis , {id:row.id}
+        pibi.anomalies =row if pibi
+
+      res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+      res.setHeader 'Content-type' , 'application/json'
+      res.charset = 'utf-8'
+      res.write JSON.stringify pibis
+      res.end()
+    .catch (e)->
+      res.write 'fail '
+      res.write e.message
+      console.log e
+      res.end()
+
+
 app.get '/geojson.json' , (req,res)->
   persister.query('SELECT *,ST_AsGeoJSON(ST_Transform(geometrie, 4326)) as geometrie  from remocra.hydrant
     WHERE ST_X((ST_Transform(geometrie, 4326))) BETWEEN $1 and $2
@@ -174,13 +223,13 @@ app.get '/annuaire.json', (req,res)->
     .then (territoires)->
       Promise.all  _.map territoires , (territoire)->
         territoire.getStructures()
-    .then (structures)->
-      structures = _.compact _.flatten  structures , true # the promise result is an arry aof array of structures
+    .spread (structures)->
+      structures = _.compact  structures , true # the promise result is an arry aof array of structures
       structures = _.uniq structures , 'id'
       Promise.all  _.map structures , (structure)->
         structure.getFiches({populate_level:1})
-    .then (fiches)->
-      fiches = _.compact _.flatten  fiches , true
+    .spread (fiches)->
+      fiches = _.compact  fiches , true
       fiches = _.uniq fiches , 'id'
       console.log fiches
       # todo : add structure this user admin
@@ -242,9 +291,7 @@ app.get '/tournee/:id' , (req,res)->
         new PIBI row.id
       Promise.all _.map pibis , (pibi)->
         pibi.populate()
-    .then (populated)->
-
-      pibis = _.flatten populated , true
+    .spread (pibis)->
 
       res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
       res.setHeader 'Content-type' , 'application/json'

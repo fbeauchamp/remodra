@@ -3,13 +3,16 @@ angular.module 'remodra', [ 'ngRoute','remodra-main','templates','leaflet-direct
   .config ($routeProvider) ->
     console.log $routeProvider
     $routeProvider
-      .when '/pibi/:id?' ,
+      .when '/pibi' ,
+        templateUrl: 'main/templates/pibi-list.html'
+        controller: 'PibiListCtrl'
+      .when '/pibi/modifier/:id?' ,
         templateUrl: 'main/templates/pibi-form.html'
         controller: 'PibiCtrl'
-      .when '/liste-tournee/:id?' ,
+      .when '/tournee' ,
         templateUrl: 'main/templates/liste-tournee.html'
         controller: 'ListetourneeCtrl'
-      .when '/detail-tournee/:id?' ,
+      .when '/tournee/detail/:id' ,
         templateUrl: 'main/templates/detail-tournee.html'
         controller: 'DetailtourneeCtrl'
       .when '/carte' ,

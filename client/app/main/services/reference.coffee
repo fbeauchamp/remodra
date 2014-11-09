@@ -4,20 +4,24 @@ angular
   console.log  ' in reference service'
 
   return  {
-    reference:()->
-      $http.get '/ref.json'
+    reference:(cache=true)->
+      $http.get '/ref.json' , {cache:cache}
     pibi:
-      get: (id)->
-        $http.get '/pibi/'+id
-      save: (hydrant)->
-        $http.post '/pibi/'+hydrant?.hydperant?.id , hydrant
-    tournee:
-      all: ->
-        $http.get '/tournees'
+      all: (cache=true)->
+        $http.get '/pibis' , {cache:cache}
           .then (http_res)->
             http_res.data
-      get: (id)->
-          $http.get '/tournee/'+id
+      get: (id,cache=true)->
+        $http.get '/pibi/'+id , {cache:cache}
+      save: (hydrant)->
+        $http.post '/pibi/'+hydrant?.hydrant?.id , hydrant
+    tournee:
+      all: (cache=true)->
+        $http.get '/tournees' , {cache:cache}
+          .then (http_res)->
+            http_res.data
+      get: (id,cache=true)->
+          $http.get '/tournee/'+id , {cache:cache}
             .then (http_res)->
               http_res.data
 

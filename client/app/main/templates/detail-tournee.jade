@@ -12,6 +12,7 @@ table.table.table-striped
   thead(ng-show="tournee.pibis.length>0")
     tr
       th #
+      th nom
       th emplacement
       th statut
       th dernière visite
@@ -19,16 +20,12 @@ table.table.table-striped
   tbody
     tr(ng-repeat="pibi in tournee.pibis")
       td {{pibi.hydrant.id}}
+      td {{pibi.hydrant.numero}}
       td {{pibi.hydrant.complement}}
       td {{pibi.hydrant.dispo_terrestre}}
       td {{pibi.hydrant.date_verif}}
       td
         a.btn.btn-danger(ng-click="remove(pibi.id)") supprimer
-    tr
-      td(colspan="5")
-        a.btn.btn-primary.btn-block(data-toggle="modal",data-target="#modal-add-pibi",ng-click="reset()") ajouter des PIBI
-
-
 
 .modal.fade#modal-add-pibi
   .modal-dialog.modal-lg

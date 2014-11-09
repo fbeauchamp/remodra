@@ -16,18 +16,18 @@ html(lang="en")
             span.icon-bar
             span.icon-bar
             span.icon-bar
-          a.navbar-brand(href="javascript:void(0)") RemoDra
+          a.navbar-brand(href="#") RemoDra
         .navbar-collapse.collapse.navbar-responsive-collapse
           ul.nav.navbar-nav
-            li(ng-class="getClass('/')")
-              a(href="#") Accueil
             li(ng-class="getClass('/carte')")
               a(href="#/carte") Carte
             li(ng-class="getClass('/pibi')")
-              a(href="#/liste-tournee/") Tournée de poteau
+              a(href="#/pibi") Points d'eau
+            li(ng-class="getClass('/tournee')")
+              a(href="#/tournee/") Tournées
             li(ng-class="getClass('/annuaire')")
               a(href="#/annuaire") Annuaire
-          form.navbar-form.navbar-right
+          //form.navbar-form.navbar-right
             input.form-control.col-lg-8(type="text" ,placeholder="Rechercher")
 
       div(ng-view="")
