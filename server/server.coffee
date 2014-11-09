@@ -226,7 +226,23 @@ app.get '/geojson.json' , (req,res)->
     res.charset = 'utf-8'
     res.write '[]'
     res.end()
-    console.log e
+
+app.post '/alerte' , (req,res)->
+  console.log req.body
+  persister.query "INSERT INTO remocra.alerte (commentaire,date_constat,date_modification,geometrie,rapporteur)
+        VALUES ($1,NOW(),NOW(),ST_TRANSFORM(ST_SetSRID(ST_MakePoint($2, $3), 4326),2154),2)" ,[req.body.commentaire,req.body.lat,req.body.lng]
+    .then (pgres)->
+      res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+      res.setHeader 'Content-type' , 'application/json'
+      res.charset = 'utf-8'
+      res.write JSON.stringify {code:200,errors:[]}
+      res.end()
+    .catch (e)->
+      res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+      res.setHeader 'Content-type' , 'application/json'
+      res.charset = 'utf-8'
+      res.write '[]'
+      res.end()
 
 
 

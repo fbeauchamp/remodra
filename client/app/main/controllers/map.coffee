@@ -1,9 +1,10 @@
 angular
   .module 'remodra-main'
-  .controller 'MapCtrl', ($scope,leafletData,$routeParams,Remocra) ->
+  .controller 'MapCtrl', ($scope,leafletData,$routeParams,Remocra,$compile) ->
     console.log ' in carte controller'
     console.log $routeParams
     $scope.tournees = []
+    $scope.alerte = {}
     Remocra.tournee.all()
       .then (tournees)->
         $scope.tournees = tournees
@@ -149,12 +150,13 @@ angular
           selectionBox.style.height = (Math.max(0, Math.abs(offset.y) - 4)) + 'px';
 
       $scope.$on 'leafletDirectiveMap.mouseup' , (event,leaflet_event)->
-        map.dragging.enable();
-        L.DomUtil.enableTextSelection();
-        addToSelection()
-        selectionStartPoint = null
-        selectionEndPoint = null
-        map._panes.overlayPane.removeChild(selectionBox);
+        if selectionStartPoint && leaflet_event.leafletEvent.originalEvent.ctrlKey
+          map.dragging.enable();
+          L.DomUtil.enableTextSelection();
+          addToSelection()
+          selectionStartPoint = null
+          selectionEndPoint = null
+          map._panes.overlayPane.removeChild(selectionBox);
 
       $scope.$on 'leafletDirectiveMap.mouseout' , (event,leaflet_event)->
         map.dragging.enable();
@@ -167,6 +169,10 @@ angular
           if bounds.contains(marker._latlng)
             addMarkerToSelection(marker)
 
+    $scope.creerAlerte = ->
+      console.log "creer alert"
+      console.log $scope.alerte
+      Remocra.alerte.save $scope.alerte.commentaire , $scope.alerte.latlng.lat , $scope.alerte.latlng.lng
 
     $scope.$on 'leafletDirectiveMap.click' , (event, leaflet_event)->
       if $scope.clickAction == 'marker'
@@ -177,7 +183,7 @@ angular
                 <div class="form-group">
                   <label class="col-sm-2 control-label">Type</label>
                   <div class="col-sm-10">
-                  <select class="form-control">
+                  <select class="form-control" ng-model="alerte.type">
                   <option>Anomalie 1</option>
                   <option>Anomalie 2</option>
                   <option>Anomaie 3</option>
@@ -189,16 +195,17 @@ angular
                   <div class="form-group">
                   <label class="col-sm-2 control-label">Desc</label>
                   <div class="col-sm-10">
-                  <textarea class="form-control" rows="5"></textarea>
+                  <textarea class="form-control" rows="5"  ng-model="alerte.commentaire"></textarea>
                   </div>
                   </div>
                   </form>
-                  <a class="btn btn-primary">Créer</a>
-                  <a class="btn btn-danger">annuler</a>')
-          .setLatLng(leaflet_event.leafletEvent.latlng);
+                  <a class="btn btn-primary" ng-click="creerAlerte()">Créer</a> ')
+          .setLatLng(leaflet_event.leafletEvent.latlng)
+        $scope.alerte.latlng = leaflet_event.leafletEvent.latlng
         leafletData.getMap().then (map)->
           popup.openOn(map)
 
+          $compile(popup._contentNode)($scope)
 
           if (!$scope.addMarker)
             return;

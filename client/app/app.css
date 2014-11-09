@@ -10,7 +10,13 @@ leaflet{
     background:none;
     border:none;
 }
-
+.leaflet-bar a.active{
+    color:white;
+    background-color:black;
+}
+.leaflet-container .leaflet-popup-content a {
+    color:white
+}
 
 
 

@@ -28,10 +28,20 @@ angular
             console.log ' now filter'
             _.filter pibis , (pibi)->
               pibi.hydrant.tournee == id
-
-
       save: (tournee)->
         $http.post '/pibi/'+tournee?.id , tournee
+    alerte:
+      all:->
+        []
+      save: (commentaire , lat, lng)->
+        alerte =
+          commentaire: commentaire
+          lat: lat
+          lng: lng
+        console.log 'will save ';
+        console.log alerte
+        $http.post '/alerte' , alerte
+
 
 
   }
