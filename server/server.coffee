@@ -282,7 +282,8 @@ app.get '/contacts' , (req,res)->
     inner join [ANNUAIRE].[dbo].rubrique r on r.rubrique_id = rf.rubrique_id
     inner join [ANNUAIRE].[dbo].fiche_donnee fd on fd.fiche_id = f.fiche_id
     inner join [ANNUAIRE].[dbo].fiche_donnee_type fdt on fdt.type_id = fd.type_id
-    WHERE r.label IN ('MAIRE','ELU 2','ELU 3','ELU 4','ELU 5')
+   /* WHERE r.label IN ('MAIRE','ELU 2','ELU 3','ELU 4','ELU 5')*/
+ORDER BY label_gipsi
     "
     , (err,rs)->
       json =[]

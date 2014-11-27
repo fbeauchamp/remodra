@@ -1,12 +1,12 @@
 a.btn.btn-primary.pull-right(data-toggle="modal",data-target="#modal-form-add-contact",ng-click="resetContact()") Créer une fiche
 
-h2 Annuaire
+h2 Annuaire ({{filtered_contacts.length}} fiches)
 
 
 .row
-  .col-sm-9
+  .col-sm-7
     div(
-    ng-repeat="contact in contacts | filter:filterContact | limitTo:10"
+    ng-repeat="contact in filtered_contacts |  limitTo:10"
     )
       a.pull-right.btn.btn-default(data-toggle="modal",data-target="#modal-form-add-contact",ng-click="editContact(contact)") Modifier
       h3
@@ -20,23 +20,24 @@ h2 Annuaire
       p(ng-repeat="(type,valeur) in contact.contact")
         | {{type}} : {{ valeur}}
 
-  .col-sm-3
-    .panel.panel-default
+  .col-sm-5
+    .panel.panel-info
       .panel-heading
-        h3.panel-title Structure
-      .panel-body(style="max-height:200px;overflow-y:scroll;overflow-x:hidden")
+        input.form-control(ng-model="filter_structure",placeholder="Structure")
+        //h3.panel-title Structure
+      .panel-body(style="max-height:300px;overflow-y:scroll;overflow-x:hidden")
         .btn.btn-block(
-        ng-class="{'btn-info':(structure==selected_structure || !selected_structure)}"
-        ng-repeat="structure in structures"
+        ng-class="{'btn-default':  !selected_structure,'btn-info':structure==selected_structure}"
+        ng-repeat="structure in structures | filter:filter_structure| limitTo:50"
         ng-click="toggleFilter('selected_structure',structure)"
         ) {{structure}}
-    .panel.panel-default
+    .panel.panel-info
       .panel-heading
-        h3.panel-title Fonction
-      .panel-body
+        input.form-control(ng-model="filter_role",placeholder="Fonction")
+      .panel-body(style="max-height:300px;overflow-y:scroll;overflow-x:hidden")
         .btn.btn-block(
-        ng-class="{'btn-info':(role==selected_role || !selected_role)}"
-        ng-repeat="role in roles"
+        ng-class="{'btn-default':  !selected_role,'btn-info':role==selected_role}"
+        ng-repeat="role in roles| filter:filter_role| limitTo:50"
         ng-click="toggleFilter('selected_role',role)"
         ) {{role}}
 
@@ -55,7 +56,7 @@ h2 Annuaire
             label.col-sm-2(for="") Nom
             .col-sm-4
               input.form-control(ng-model="new_contact.nom")
-            label.col-sm-2(for="") Prenom
+            label.col-sm-2(for="") Prénom
             .col-sm-4
               input.form-control(ng-model="new_contact.prenom")
           .form-group
@@ -78,6 +79,7 @@ h2 Annuaire
                 option(value="5") 5
             .col-sm-6
               p.help-block En cas de besoin, le CODIS essayera de joindre la personne ayant la  priorité 1 puis la 2 et ainsi de suite
+              p.help-block Seuls les utilisateurs acceptant d'être contactés par le CODIS peuvent avoir le suivi en temps réel
           .form-group
             label.col-sm-2(for="") Tel Fixe
             .col-sm-4
@@ -96,18 +98,37 @@ h2 Annuaire
               .checkbox.radio-primary
                 label
                   input.bs-material(type="checkbox" )
-                  span.check Recevoir les bulletins quotidiens d'activité
-              .checkbox.radio-primary
+                  span.check Recevoir les bulletins quotidiens d'activité des opérations
+                  select
+                    option Même sans moyen du SDIS71 engagé
+                    option Si il y a eu au moins un moyen du SDIS71  engagé
+                    option Si il y a eu au moins un chef de groupe est engagé
+                    option Si il y a eu au moins un chef de colonne est engagé
+                    option Si il y a eu au moins un chef de site est engagé
+              .checkbox.radio-primary(ng-show="new_contact.priority>0")
                 label
                   input.bs-material(type="checkbox",ng-disabled="new_contact.priority==0" )
                   span.check
                     | Recevoir les notifications en temps réel par mail&nbsp;
                     a(href="http://mobops.sdis71.fr",target="_blank") (mobops)
-              .checkbox.radio-primary
+                  select
+                    option Même sans moyen du SDIS71 engagé
+                    option Dès qu'il y a un moyen du SDIS71  engagé
+                    option Dès qu'un chef de groupe est engagé
+                    option Dès qu'un chef de colonne est engagé
+                    option Dès qu'un chef de site est engagé
+              .checkbox.radio-primary(ng-show="new_contact.priority>0")
                 label
                   input.bs-material(type="checkbox",ng-disabled="new_contact.priority==0" )
                   span.check
-                    | Recevoir les notifications en temps réel par sur mon smartphone android&nbsp;
-                    a(href="http://mobops.sdis71.fr",target="_blank") (Installer l'application et activer le smartphone)
+                    | Recevoir les notifications en temps réel par méssagerie istantanéé&nbsp;
+                    a(target="_blank") (Installer l'application et activer le smartphone)
+                  select
+                    option Même sans moyen du SDIS71 engagé
+                    option Dès qu'il y a un moyen du SDIS71  engagé
+                    option Dès qu'un chef de groupe est engagé
+                    option Dès qu'un chef de colonne est engagé
+                    option Dès qu'un chef de site est engagé
+
         .modal-footer
           a.btn.btn-primary(data-dismiss="modal") Enregistrer

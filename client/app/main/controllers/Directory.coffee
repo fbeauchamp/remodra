@@ -21,17 +21,20 @@ angular.module 'remodra-main'
   $http.get '/contacts'
     .then (res)->
       console.log 'contacts'
-      $scope.contacts = res.data
-      $scope.structures = _.uniq _.compact _.pluck $scope.contacts , 'structure'
-      $scope.roles = _.uniq _.compact _.pluck $scope.contacts , 'role'
+      $scope.filtered_contacts = $scope.contacts = res.data
+      $scope.structures = _.sortBy _.uniq _.compact _.pluck $scope.contacts , 'structure'
+      $scope.roles = _.sortBy _.uniq _.compact _.pluck $scope.contacts , 'role'
+
 
 
 
   $scope.new_contact =
     priority : 0
 
-  $scope.structures = _.uniq _.compact _.pluck $scope.contacts , 'structure'
-  $scope.roles = _.uniq _.compact _.pluck $scope.contacts , 'role'
+  $scope.structures = _.sortBy _.uniq _.compact _.pluck $scope.contacts , 'structure'
+  $scope.roles = _.sortBy _.uniq _.compact _.pluck $scope.contacts , 'role'
+
+
 
   $scope.toggleFilter = (type,value)->
     if $scope[type] == value
@@ -39,9 +42,12 @@ angular.module 'remodra-main'
     else
       $scope[type] = value
 
-  $scope.filterContact = (element)->
-    (!$scope.selected_role or element.role == $scope.selected_role) and
-    (!$scope.selected_structure or element.structure == $scope.selected_structure)
+    $scope.filtered_contacts = _.filter  $scope.contacts , (element)->
+      (!$scope.selected_role or element.role == $scope.selected_role) and
+      (!$scope.selected_structure or element.structure == $scope.selected_structure)
+
+    $scope.structures = _.sortBy _.uniq _.compact _.pluck $scope.filtered_contacts , 'structure'
+    $scope.roles = _.sortBy _.uniq _.compact _.pluck $scope.filtered_contacts , 'role'
 
   $scope.resetContact = ->
     $scope.modal_title="Création d'une nouvelle fiche"
