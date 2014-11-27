@@ -15,10 +15,11 @@ h2 Annuaire ({{filtered_contacts.length}} fiches)
         strong Structure
         | : {{contact.structure}}
       p
-        strong Fonction
+        strong Rôle
         | : {{contact.role}}
       p(ng-repeat="(type,valeur) in contact.contact")
-        | {{type}} : {{ valeur}}
+        strong {{type}}
+        | : {{ valeur}}
 
   .col-sm-5
     .panel.panel-info
@@ -63,7 +64,7 @@ h2 Annuaire ({{filtered_contacts.length}} fiches)
             label.col-sm-2(for="") Structure
             .col-sm-4
               select.form-control(ng-model="new_contact.structure",ng-options="o as o for o in structures")
-            label.col-sm-2(for="") Fonction
+            label.col-sm-2(for="") Rôle
             .col-sm-4
               select.form-control(ng-model="new_contact.role",ng-options="o as o for o in roles")
               p.help-block Fonction au sein de la structure
@@ -80,17 +81,34 @@ h2 Annuaire ({{filtered_contacts.length}} fiches)
             .col-sm-6
               p.help-block En cas de besoin, le CODIS essayera de joindre la personne ayant la  priorité 1 puis la 2 et ainsi de suite
               p.help-block Seuls les utilisateurs acceptant d'être contactés par le CODIS peuvent avoir le suivi en temps réel
-          .form-group
-            label.col-sm-2(for="") Tel Fixe
-            .col-sm-4
-              input.form-control(ng-model="new_contact.tel_fixe")
-            label.col-sm-2(for="") Tel portable
-            .col-sm-4
-              input.form-control(ng-model="new_contact.tel_portable")
-          .form-group
-            label.col-sm-2(for="") Adresse email
+          .form-group(ng-repeat="(type,valeur) in new_contact.contact")
+            label.col-sm-2(for="")
+              strong {{type}}
             .col-sm-10
-              input.form-control(ng-model="new_contact.email")
+              input.form-control(ng-model="new_contact.contact[type]")
+          .form-group
+            label.col-sm-6(for="")
+              strong Ajouter un champ de contact
+            .col-sm-6
+              select.form-control(
+              ng-model="new_contact_field",
+              ng-options="o as o for o in contact_types"
+              ng-change="new_contact.contact[new_contact_field]=''"
+              )
+
+
+          //
+            .form-group
+              label.col-sm-2(for="") Tel Fixe
+              .col-sm-4
+                input.form-control(ng-model="new_contact.tel_fixe")
+              label.col-sm-2(for="") Tel portable
+              .col-sm-4
+                input.form-control(ng-model="new_contact.tel_portable")
+            .form-group
+              label.col-sm-2(for="") Adresse email
+              .col-sm-10
+                input.form-control(ng-model="new_contact.email")
 
           .form-group
             label.col-sm-2 Autorisations

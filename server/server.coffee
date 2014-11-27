@@ -304,6 +304,20 @@ ORDER BY label_gipsi
       res.write JSON.stringify _.compact json
       res.end()
 
+
+  app.get '/contact_types' , (req,res)->
+    request = new mssql.Request()
+    request.query "SELECT  type_id as id ,label
+      FROM  [ANNUAIRE].[dbo].[FICHE_DONNEE_TYPE]
+        ORDER BY label
+      "
+      , (err,rs)->
+        res.setHeader 'Cache-Control' , 'no-cache, must-revalidate'
+        res.setHeader 'Content-type' , 'application/json'
+        res.charset = 'utf-8'
+        res.write JSON.stringify _.compact rs
+        res.end()
+
 app.get '/tournees' , (req,res)->
   persister.where 'remocra.tournee' , {}
   .then (pgres)->
