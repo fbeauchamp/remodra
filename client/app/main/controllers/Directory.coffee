@@ -41,7 +41,7 @@ angular.module 'remodra-main'
   $scope.roles = _.sortBy _.uniq _.compact _.pluck $scope.contacts , 'role'
 
 
-
+  console.log $scope.alert_levels
   $scope.toggleFilter = (type,value)->
     if $scope[type] == value
       $scope[type] = null
@@ -59,19 +59,18 @@ angular.module 'remodra-main'
     $scope.modal_title="Création d'une nouvelle fiche"
     $scope.new_contact =
       priority : 0
+    $scope.new_contact.alert =
+      brq:0
+      mail:0
 
   $scope.editContact = (contact)->
     $scope.modal_title="Modification d'une fiche"
+    contact.priority = 0
+    contact.alert =
+      brq:0
+      mail:0
     $scope.new_contact =   _.clone contact , true
-
-  $scope.addContactField = ()->
-    console.log(' add field ')
-    console.log($scope.new_contact_field)
-    contact_type = _.find $scope.contact_types , {id:$scope.new_contact_field}
-    return true unless contact_type?.label
-
-    console.log (' label '+contact_type?.label)
-    $scope.new_contact.contact[contact_type?.label] =' '
+    console.log  $scope.new_contact
 
 
   $scope.saveContact = (contact) ->

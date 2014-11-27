@@ -79,8 +79,8 @@ h2 Annuaire ({{filtered_contacts.length}} fiches)
                 option(value="4") 4
                 option(value="5") 5
             .col-sm-6
-              p.help-block En cas de besoin, le CODIS essayera de joindre la personne ayant la  priorité 1 puis la 2 et ainsi de suite
-              p.help-block Seuls les utilisateurs acceptant d'être contactés par le CODIS peuvent avoir le suivi en temps réel
+              small.help-block En cas de besoin, le CODIS essayera de joindre la personne ayant la  priorité 1 puis la 2 et ainsi de suite
+              small.help-block Seuls les utilisateurs acceptant d'être contactés par le CODIS peuvent avoir le suivi en temps réel
           .form-group(ng-repeat="(type,valeur) in new_contact.contact")
             label.col-sm-2(for="")
               strong {{type}}
@@ -95,58 +95,38 @@ h2 Annuaire ({{filtered_contacts.length}} fiches)
               ng-options="o as o for o in contact_types"
               ng-change="new_contact.contact[new_contact_field]=''"
               )
-
-
-          //
-            .form-group
-              label.col-sm-2(for="") Tel Fixe
-              .col-sm-4
-                input.form-control(ng-model="new_contact.tel_fixe")
-              label.col-sm-2(for="") Tel portable
-              .col-sm-4
-                input.form-control(ng-model="new_contact.tel_portable")
-            .form-group
-              label.col-sm-2(for="") Adresse email
-              .col-sm-10
-                input.form-control(ng-model="new_contact.email")
-
+          hr
+          h4 Recevoir des alertes pour les interventions sur votre territoire
           .form-group
-            label.col-sm-2 Autorisations
-            .col-sm-10
-              .checkbox.radio-primary
-                label
-                  input.bs-material(type="checkbox" )
-                  span.check Recevoir les bulletins quotidiens d'activité des opérations
-                  select
-                    option Même sans moyen du SDIS71 engagé
-                    option Si il y a eu au moins un moyen du SDIS71  engagé
-                    option Si il y a eu au moins un chef de groupe est engagé
-                    option Si il y a eu au moins un chef de colonne est engagé
-                    option Si il y a eu au moins un chef de site est engagé
-              .checkbox.radio-primary(ng-show="new_contact.priority>0")
-                label
-                  input.bs-material(type="checkbox",ng-disabled="new_contact.priority==0" )
-                  span.check
-                    | Recevoir les notifications en temps réel par mail&nbsp;
-                    a(href="http://mobops.sdis71.fr",target="_blank") (mobops)
-                  select
-                    option Même sans moyen du SDIS71 engagé
-                    option Dès qu'il y a un moyen du SDIS71  engagé
-                    option Dès qu'un chef de groupe est engagé
-                    option Dès qu'un chef de colonne est engagé
-                    option Dès qu'un chef de site est engagé
-              .checkbox.radio-primary(ng-show="new_contact.priority>0")
-                label
-                  input.bs-material(type="checkbox",ng-disabled="new_contact.priority==0" )
-                  span.check
-                    | Recevoir les notifications en temps réel par méssagerie istantanéé&nbsp;
-                    a(target="_blank") (Installer l'application et activer le smartphone)
-                  select
-                    option Même sans moyen du SDIS71 engagé
-                    option Dès qu'il y a un moyen du SDIS71  engagé
-                    option Dès qu'un chef de groupe est engagé
-                    option Dès qu'un chef de colonne est engagé
-                    option Dès qu'un chef de site est engagé
+              label.col-sm-6
+                | Bulletin récapitulatif quotidien
+                small.help-block Tous les matins à 7h30
+              .col-sm-6
+                select.form-control(
+                  ng-model="new_contact.alert.brq"
+                  )
+                  option(value="0") Jamais
+                  option(value="1") Même sans moyen du SDIS71 engagé
+                  option(value="2") Si il y a eu au moins un moyen du SDIS71  engagé
+                  option(value="3") Si il y a eu au moins un chef de groupe est engagé
+                  option(value="4") Si il y a eu au moins un chef de colonne est engagé
+                  option(value="5") Si il y a eu au moins un chef de site est engagé
+            .form-group(ng-show="new_contact.priority")
+              label.col-sm-6
+                | Notifications en temps réel par mail&nbsp;
+                a(href="http://mobops.sdis71.fr",target="_blank") (mobops)
+              .col-sm-6
+                select.form-control(
+                  ng-model="new_contact.alert.mail"
+                )
+                  option(value="0") Jamais
+                  option(value="1") Même sans moyen du SDIS71 engagé
+                  option(value="2") Si il y a eu au moins un moyen du SDIS71  engagé
+                  option(value="3") Si il y a eu au moins un chef de groupe est engagé
+                  option(value="4") Si il y a eu au moins un chef de colonne est engagé
+                  option(value="5") Si il y a eu au moins un chef de site est engagé
+
+
 
         .modal-footer
           a.btn.btn-primary(data-dismiss="modal") Enregistrer
